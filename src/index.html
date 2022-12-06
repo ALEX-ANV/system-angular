@@ -6,8 +6,38 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+  </style>
+  <script  src="./loader.js"></script>
 </head>
 <body>
-  <app-root></app-root>
+<app-root></app-root>
+<script  type="application/javascript">
+  System.addImportMap({
+    "imports": {
+      "@angular/core": "/bundles/angular-core.js",
+      "@angular/platform-browser": "/bundles/angular-platform-browser.js",
+      "@angular/platform-browser-dynamic": "/bundles/angular-platform-browser-dynamic.js",
+      "@angular/compiler": "/bundles/angular-compiler.js",
+      "@angular/forms": "/bundles/angular-forms.js",
+      "@angular/common": "/bundles/angular-common.js",
+      "rxjs": "/bundles/rxjs.js",
+      "rxjs/operators": "/bundles/rxjs-operators.js",
+      "tslib": "/bundles/tslib.js",
+    }
+  });
+</script>
+<script type="application/javascript" src="./bundles/zone.js"></script>
+<script type="application/javascript" src="./app/app.component.js"></script>
+<script type="application/javascript" src="./app/child.component.js"></script>
+<script type="application/javascript" src="./app/test/child.component.js"></script>
+<script type="application/javascript" src="./main.js"></script>
+<script type="application/javascript">
+  System.import('main')
+</script>
 </body>
+
 </html>
