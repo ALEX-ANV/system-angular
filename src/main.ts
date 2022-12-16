@@ -2,6 +2,9 @@
 
 import {bootstrapApplication} from '@angular/platform-browser';
 import {AppComponent} from './app/app.component';
-import "@angular/compiler"
+import "@angular/compiler";
+import { importProvidersFrom } from '@angular/core'
 
-bootstrapApplication(AppComponent)  .catch(err => console.error(err));
+bootstrapApplication(AppComponent, {
+    providers: []
+})  .catch(err => console.error(err));

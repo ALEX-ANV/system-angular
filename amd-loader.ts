@@ -1,3 +1,4 @@
+
 export type ImportsMap = { imports: Record<string, string> };
 
 
@@ -63,7 +64,7 @@ class System {
 
   async resolveExports(...ids: string[]) {
     return Promise.all(ids.map(async id => {
-        if (this.resolvedExports[id]) {
+        if (id in this.resolvedExports) {
           return await this.resolvedExports[id];
         }
 
@@ -76,7 +77,7 @@ class System {
 
         return this.resolvedExports[id] = new Promise(async (resolve, reject) => {
           if (!mod) {
-            throw new Error("can't fetch module: " + id);
+            return reject(new Error("can't fetch module: " + id));
           }
 
           const [deps, func] = mod;
@@ -96,11 +97,9 @@ class System {
             }
             resolve({setters, execute, exports});
           } catch (e) {
-            console.log(e);
-            throw e;
+            return reject(e);
           }
         });
-
       }
     ));
   }
@@ -149,7 +148,20 @@ class System {
 
   private async fetchModule(id: string) {
     const module = await this.fetch(this.importsMap.imports[id]);
-    const define = (allDeps: string[], func: Function) => {
+
+    const define = (...args: any[]) => {
+
+      let allDeps: string[] = [];
+      let func: Function;
+
+      if (args.length === 2) {
+        [allDeps, func] = args;
+      }
+
+      if (args.length === 3) {
+        [, allDeps, func] = args;
+      }
+
       const deps = allDeps.slice(1);
       this.register(id, deps, function ($__export: Function,) {
         const resolvedDeps: unknown[] = [];
@@ -189,11 +201,12 @@ class System {
   }
 }
 
-export const AMDLoader = (globalThis as any).AMDLoader = function (global: Global = {}, fetcher?: Fetcher) {
+const AMDLoader = (globalThis as any).AMDLoader = function (global: Global = {}, fetcher?: Fetcher) {
   global.System = new System(fetcher);
   return global;
 }
 
-if (typeof window !== 'undefined') {
-  AMDLoader(window as any);
-}
+const hasSelf = typeof self !== 'undefined';
+const envGlobal = hasSelf ? self : global;
+
+AMDLoader(envGlobal as any);
